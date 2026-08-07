@@ -16,7 +16,8 @@ import {
   ExternalLink,
   Eye,
   ChevronUp,
-  Lightbulb
+  Lightbulb,
+  Printer
 } from 'lucide-react';
 
 /* ============================================================
@@ -267,6 +268,19 @@ const customStyles = `
   .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #00A6B5; }
   @keyframes pulse-soft { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.7; transform: scale(1.02); } }
   .animate-pulse-soft { animation: pulse-soft 3s infinite ease-in-out; }
+
+  /* ===== IMPRESIÓN: ficha en papel ===== */
+  .print-only { display: none; }
+  @media print {
+    @page { size: A4; margin: 14mm 12mm; }
+    html, body { height: auto !important; overflow: visible !important; background: #ffffff !important; }
+    .screen-only { display: none !important; }
+    .print-only { display: block !important; }
+    .pf-avoid-break { break-inside: avoid; page-break-inside: avoid; }
+    .pf-page-break { break-before: page; page-break-before: always; }
+    .pf table { border-collapse: collapse; width: 100%; }
+    .pf th, .pf td { border: 0.5pt solid #cbd5e1; }
+  }
 `;
 
 export default function App() {
@@ -317,6 +331,7 @@ export default function App() {
     <div className="h-full w-full bg-slate-50 flex flex-col font-montserrat text-slate-800 overflow-hidden select-none">
       <style>{customStyles}</style>
 
+      <div className="screen-only h-full w-full flex flex-col">
       {/* ENCABEZADO SUPERIOR */}
       <header className="bg-white border-b border-slate-200 px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4 z-40 shadow-sm shrink-0">
         <div className="flex flex-col items-center md:items-start w-full md:w-auto text-center md:text-left">
@@ -328,10 +343,19 @@ export default function App() {
             {fullCode} · {course.name}
           </span>
         </div>
-        <div className="flex items-center gap-4 md:gap-6 bg-white rounded-lg p-1">
-          <img src="https://comunicacionestrategica.pucv.cl/LOGO100/9/cuerpo/cuerpo_color.png" alt="PUCV" className="h-6 md:h-8 object-contain" />
-          <div className="w-px h-5 md:h-7 bg-slate-200"></div>
-          <img src="https://desarrollodocente.pucv.cl/wp-content/uploads/2023/07/logo_DD.svg" alt="DD" className="h-6 md:h-8 object-contain" />
+        <div className="flex items-center gap-3 md:gap-5">
+          <button
+            onClick={() => window.print()}
+            className="flex items-center gap-1.5 text-[10px] md:text-xs font-black uppercase tracking-widest text-[#002D56] border border-slate-200 hover:border-[#00A6B5] hover:text-[#00A6B5] rounded-lg px-3 py-1.5 transition-colors"
+            title="Imprimir o guardar como PDF la ficha de esta guía"
+          >
+            <Printer size={15} /> <span className="hidden md:inline">Imprimir ficha</span>
+          </button>
+          <div className="flex items-center gap-4 md:gap-6 bg-white rounded-lg p-1">
+            <img src="https://comunicacionestrategica.pucv.cl/LOGO100/9/cuerpo/cuerpo_color.png" alt="PUCV" className="h-6 md:h-8 object-contain" />
+            <div className="w-px h-5 md:h-7 bg-slate-200"></div>
+            <img src="https://desarrollodocente.pucv.cl/wp-content/uploads/2023/07/logo_DD.svg" alt="DD" className="h-6 md:h-8 object-contain" />
+          </div>
         </div>
       </header>
 
@@ -686,6 +710,142 @@ export default function App() {
           </div>
         </div>
       )}
+      </div>
+
+      {/* ===================== FICHA IMPRIMIBLE ===================== */}
+      <PrintableSheet course={course} fullCode={fullCode} />
+    </div>
+  );
+}
+
+/* ============================================================
+ *  FICHA IMPRIMIBLE (solo visible al imprimir / guardar PDF)
+ * ============================================================ */
+const DIM_TITLES: Record<number, string> = {
+  1: "Perfil de Egreso",
+  2: "Competencias de Asignatura",
+  3: "Resultados de Aprendizaje",
+  4: "Procedimientos de Evaluación",
+  5: "Criterios de Evaluación",
+  6: "Instrumentos",
+};
+const NIVEL_FILL = ["#E7F3EC", "#E0F3F5", "#FEF3E0", "#FCE9DF"];
+
+function PrintableSheet({ course, fullCode }: { course: Course; fullCode: string }) {
+  const refGroups: { category: string; items: string[] }[] = [];
+  course.references.forEach((r) => {
+    let g = refGroups.find((x) => x.category === r.category);
+    if (!g) { g = { category: r.category, items: [] }; refGroups.push(g); }
+    g.items.push(r.cite);
+  });
+
+  return (
+    <div className="print-only pf" style={{ fontFamily: 'Montserrat, sans-serif', color: '#1e293b', fontSize: 10.5, lineHeight: 1.5 }}>
+      {/* Encabezado de la ficha */}
+      <div className="pf-avoid-break" style={{ borderBottom: '2pt solid #002D56', paddingBottom: 8, marginBottom: 14 }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
+          <div>
+            <div style={{ fontSize: 8, fontWeight: 800, letterSpacing: 1.5, textTransform: 'uppercase', color: '#64748b' }}>
+              Dirección de Desarrollo Docente · PUCV
+            </div>
+            <div style={{ fontSize: 16, fontWeight: 900, color: '#002D56', marginTop: 2 }}>
+              Guía de Evaluación · {fullCode}
+            </div>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#00A6B5' }}>{course.name}</div>
+            <div style={{ fontSize: 9, color: '#64748b', marginTop: 1 }}>{course.unit}</div>
+          </div>
+          <div style={{ display: 'flex', gap: 3 }}>
+            {['#E8251C','#F4C318','#3DB9E8','#7B4CB8'].map((c) => (
+              <span key={c} style={{ width: 9, height: 9, background: c, borderRadius: 2, display: 'inline-block' }} />
+            ))}
+          </div>
+        </div>
+        {course.intro && (
+          <p style={{ marginTop: 8, fontSize: 9.5, color: '#475569' }}>{course.intro}</p>
+        )}
+      </div>
+
+      {/* Seis componentes */}
+      {course.dimensions.map((dim) => (
+        <div key={dim.id} className="pf-avoid-break" style={{ marginBottom: 12 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+            <span style={{ fontSize: 8, fontWeight: 900, color: '#fff', background: '#002D56', borderRadius: 3, padding: '1px 6px' }}>{dim.id}</span>
+            <span style={{ fontSize: 12, fontWeight: 800, color: '#002D56' }}>{DIM_TITLES[dim.id]}</span>
+          </div>
+
+          <p style={{ margin: '0 0 5px', color: '#334155' }}>{dim.proposito}</p>
+
+          {/* Competencias del perfil (dim 1) */}
+          {dim.competencias && dim.competencias.length > 0 && (
+            <div style={{ margin: '5px 0' }}>
+              {dim.competencias.map((c, i) => (
+                <div key={i} style={{ display: 'flex', gap: 6, marginBottom: 2 }}>
+                  <span style={{ fontSize: 8, fontWeight: 900, color: '#fff', background: '#00A6B5', borderRadius: 3, padding: '1px 5px', whiteSpace: 'nowrap' }}>{c.codigo}</span>
+                  <span style={{ color: '#475569' }}>{c.texto}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* Recomendación al docente */}
+          {dim.aplicacionDesc && dim.id !== 6 && (
+            <div style={{ background: '#f8fafc', borderLeft: '2pt solid #00A6B5', padding: '4px 8px', margin: '5px 0', fontSize: 9.5 }}>
+              <span style={{ fontWeight: 700, color: '#002D56' }}>{dim.aplicacionTitle}: </span>
+              <span style={{ color: '#475569' }}>{dim.aplicacionDesc}</span>
+            </div>
+          )}
+
+          {/* Instrumentos con rúbricas en tabla (dim 6) */}
+          {dim.examples && dim.examples.map((ex, ei) => (
+            <div key={ei} className="pf-avoid-break" style={{ margin: '8px 0' }}>
+              <div style={{ fontSize: 10.5, fontWeight: 800, color: '#002D56' }}>{ex.name}</div>
+              {ex.source && <div style={{ fontSize: 8.5, color: '#94a3b8', marginBottom: 3 }}>{ex.source}</div>}
+              {ex.desc && <div style={{ fontSize: 9.5, color: '#475569', marginBottom: 4 }}>{ex.desc}</div>}
+
+              {ex.rubrica && (
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 8.5, marginTop: 3 }}>
+                  <thead>
+                    <tr>
+                      <th style={{ background: '#002D56', color: '#fff', textAlign: 'left', padding: '3px 5px', fontWeight: 800, width: '20%' }}>Criterio</th>
+                      {ex.rubrica.niveles.map((n, ni) => (
+                        <th key={ni} style={{ background: '#334155', color: '#fff', textAlign: 'left', padding: '3px 5px', fontWeight: 700 }}>{n}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {ex.rubrica.criterios.map((cr, ci) => (
+                      <tr key={ci}>
+                        <td style={{ fontWeight: 700, color: '#002D56', padding: '3px 5px', verticalAlign: 'top', background: '#f1f5f9' }}>{cr.criterio}</td>
+                        {cr.niveles.map((d, di) => (
+                          <td key={di} style={{ padding: '3px 5px', verticalAlign: 'top', color: '#334155', background: NIVEL_FILL[di] || '#fff' }}>{d}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              )}
+            </div>
+          ))}
+        </div>
+      ))}
+
+      {/* Referencias */}
+      <div className="pf-avoid-break" style={{ marginTop: 10, borderTop: '1pt solid #cbd5e1', paddingTop: 6 }}>
+        <div style={{ fontSize: 11, fontWeight: 800, color: '#002D56', marginBottom: 4 }}>Referencias</div>
+        {refGroups.map((g, gi) => (
+          <div key={gi} style={{ marginBottom: 3 }}>
+            <div style={{ fontSize: 8, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5, color: '#94a3b8' }}>{g.category}</div>
+            {g.items.map((cite, ci) => (
+              <div key={ci} style={{ fontSize: 8.5, color: '#475569' }}>{cite}</div>
+            ))}
+          </div>
+        ))}
+      </div>
+
+      {/* Pie */}
+      <div style={{ marginTop: 10, paddingTop: 5, borderTop: '1pt solid #e2e8f0', fontSize: 8, color: '#94a3b8', textAlign: 'center' }}>
+        Dirección de Desarrollo Docente · Pontificia Universidad Católica de Valparaíso · desarrollodocente.pucv.cl
+      </div>
     </div>
   );
 }
