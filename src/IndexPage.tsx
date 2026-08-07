@@ -1,7 +1,6 @@
 import React from 'react'
 import {
-  Microscope, Cpu, Wheat, GraduationCap, Waves, Building2,
-  Scale, Sigma, Music, Newspaper, ArrowUpRight
+  Microscope, Cpu, Wheat, GraduationCap, Layers, ArrowUpRight
 } from 'lucide-react'
 
 const FACULTIES = [
@@ -48,54 +47,22 @@ const FACULTIES = [
     ]
   },
   {
-    name: "Facultad de Ciencias del Mar y Geografía",
-    icon: Waves,
+    name: "Otras Unidades Académicas",
+    icon: Layers,
     color: "#7B4CB8",
     guias: [
-      { code: 'GEO 1052', key: 'geo1052', name: 'Geografía Urbana y Metropolitana' },
-    ]
-  },
-  {
-    name: "Facultad de Ciencias Económicas y Administrativas",
-    icon: Building2,
-    color: "#9AC8E8",
-    guias: [
-      { code: 'TSL 271', key: 'tsl271', name: 'Teoría Política' },
-    ]
-  },
-  {
-    name: "Escuela de Derecho",
-    icon: Scale,
-    color: "#E8251C",
-    guias: [
-      { code: 'DER 1021', key: 'der1021', name: 'Familia y Patrimonio en el Derecho Romano' },
-    ]
-  },
-  {
-    name: "Instituto de Matemáticas",
-    icon: Sigma,
-    color: "#3DB9E8",
-    guias: [
-      { code: 'MAT 1004', key: 'mat1004', name: 'Álgebra Lineal' },
-    ]
-  },
-  {
-    name: "Instituto de Música",
-    icon: Music,
-    color: "#F4C318",
-    guias: [
-      { code: 'MUS 2438', key: 'mus2438', name: 'Acústica y Organología' },
-    ]
-  },
-  {
-    name: "Escuela de Periodismo",
-    icon: Newspaper,
-    color: "#00B2C8",
-    guias: [
-      { code: 'PER 1125', key: 'per1125', name: 'Pensamiento Político Contemporáneo' },
+      { code: 'DER 1021', key: 'der1021', name: 'Familia y Patrimonio en el Derecho Romano — Escuela de Derecho' },
+      { code: 'GEO 1052', key: 'geo1052', name: 'Geografía Urbana y Metropolitana — Fac. Ciencias del Mar y Geografía' },
+      { code: 'MAT 1004', key: 'mat1004', name: 'Álgebra Lineal — Instituto de Matemáticas' },
+      { code: 'MUS 2438', key: 'mus2438', name: 'Acústica y Organología — Instituto de Música' },
+      { code: 'PER 1125', key: 'per1125', name: 'Pensamiento Político Contemporáneo — Escuela de Periodismo' },
+      { code: 'TSL 271',  key: 'tsl271',  name: 'Teoría Política — Fac. Ciencias Económicas y Administrativas' },
     ]
   },
 ]
+
+// Ordena los cursos de cada sección alfabéticamente por código
+FACULTIES.forEach(f => f.guias.sort((a, b) => a.code.localeCompare(b.code)))
 
 const TOTAL_GUIAS = FACULTIES.reduce((acc, f) => acc + f.guias.length, 0)
 
@@ -116,13 +83,16 @@ export default function IndexPage() {
       <header className="px-6 md:px-12 pt-10 pb-8 border-b border-slate-100">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center gap-6">
 
-          {/* Logo real Desarrollo Docente */}
+          {/* Wordmark de texto — sin imagen externa */}
           <div className="shrink-0">
-            <img
-              src={`${import.meta.env.BASE_URL}logo-dd.png`}
-              alt="Desarrollo Docente PUCV"
-              className="h-14 w-auto"
-            />
+            <div className="flex items-center gap-1.5 mb-1.5">
+              <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: '#E8251C' }} />
+              <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: '#F4C318' }} />
+              <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: '#3DB9E8' }} />
+              <span className="w-2.5 h-2.5 rounded-sm" style={{ backgroundColor: '#7B4CB8' }} />
+            </div>
+            <p className="font-black text-slate-900 text-base leading-tight">Desarrollo Docente</p>
+            <p className="font-bold text-slate-400 text-[11px] tracking-widest">PUCV</p>
           </div>
 
           <div className="hidden sm:block w-px self-stretch bg-slate-100 shrink-0" />

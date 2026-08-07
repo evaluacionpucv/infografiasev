@@ -56,20 +56,37 @@ export default function App() {
   if (route && ROUTES[route]) {
     const GuiaComponent = ROUTES[route]
     return (
-      <div>
-        <div style={{position:'fixed',top:12,left:12,zIndex:9999}}>
-          <a href="#/"
+      <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div
+          style={{
+            flexShrink: 0,
+            height: 34,
+            display: 'flex',
+            alignItems: 'center',
+            paddingLeft: 12,
+            backgroundColor: '#002D56',
+          }}
+        >
+          <a
+            href="#/"
             style={{
-              display:'inline-flex',alignItems:'center',gap:6,
-              padding:'6px 14px',borderRadius:8,
-              backgroundColor:'#002D56',color:'white',
-              fontSize:12,fontWeight:700,fontFamily:'Montserrat,sans-serif',
-              textDecoration:'none',boxShadow:'0 2px 8px rgba(0,0,0,0.15)'
-            }}>
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: 6,
+              color: 'white',
+              fontSize: 12,
+              fontWeight: 700,
+              fontFamily: 'Montserrat, sans-serif',
+              textDecoration: 'none',
+              opacity: 0.9,
+            }}
+          >
             ← Volver al índice
           </a>
         </div>
-        <GuiaComponent />
+        <div style={{ flex: 1, minHeight: 0 }}>
+          <GuiaComponent />
+        </div>
       </div>
     )
   }

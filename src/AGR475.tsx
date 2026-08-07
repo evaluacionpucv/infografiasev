@@ -314,7 +314,7 @@ export default function App() {
   });
 
   return (
-    <div className="h-screen w-full bg-slate-50 flex flex-col font-montserrat text-slate-800 overflow-hidden select-none">
+    <div className="h-full w-full bg-slate-50 flex flex-col font-montserrat text-slate-800 overflow-hidden select-none">
       <style>{customStyles}</style>
 
       {/* ENCABEZADO SUPERIOR */}
