@@ -3,7 +3,6 @@ import {
   Microscope, Cpu, Wheat, GraduationCap, Waves, Building2,
   Scale, Sigma, Music, Newspaper, ArrowUpRight
 } from 'lucide-react'
-import { LogoMark } from './LogoMark'
 
 const FACULTIES = [
   {
@@ -117,15 +116,13 @@ export default function IndexPage() {
       <header className="px-6 md:px-12 pt-10 pb-8 border-b border-slate-100">
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row sm:items-center gap-6">
 
-          {/* Isotipo Desarrollo Docente */}
-          <div className="shrink-0 flex items-center gap-3">
-            <LogoMark size={52} />
-            <div className="leading-[1.05] hidden sm:block">
-              <p className="font-black text-slate-900 text-lg">Desarrollo</p>
-              <p className="font-black text-slate-900 text-lg">
-                Docente <span className="font-bold text-slate-400 text-[11px] align-middle">PUCV</span>
-              </p>
-            </div>
+          {/* Logo real Desarrollo Docente */}
+          <div className="shrink-0">
+            <img
+              src={`${import.meta.env.BASE_URL}logo-dd.png`}
+              alt="Desarrollo Docente PUCV"
+              className="h-14 w-auto"
+            />
           </div>
 
           <div className="hidden sm:block w-px self-stretch bg-slate-100 shrink-0" />
