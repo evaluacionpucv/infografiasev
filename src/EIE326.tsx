@@ -319,9 +319,22 @@ const customStyles = `
   .print-only { display: none; }
   @media print {
     @page { size: A4; margin: 14mm 12mm; }
-    html, body { height: auto !important; overflow: visible !important; background: #ffffff !important; }
+    html, body {
+      height: auto !important;
+      min-height: 0 !important;
+      overflow: visible !important;
+      background: #ffffff !important;
+    }
+    /* Neutraliza el contenedor raíz de la app y cualquier ancestro con
+       altura fija u overflow oculto, para que la ficha fluya en varias hojas */
+    body * {
+      height: auto !important;
+      max-height: none !important;
+      overflow: visible !important;
+    }
     .screen-only { display: none !important; }
     .print-only { display: block !important; }
+    .pf { position: static !important; }
     .pf-avoid-break { break-inside: avoid; page-break-inside: avoid; }
     .pf-page-break { break-before: page; page-break-before: always; }
     .pf table { border-collapse: collapse; width: 100%; }
